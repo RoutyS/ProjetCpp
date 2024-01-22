@@ -525,7 +525,7 @@ class Image
 				{
 					for (int k = 0; k < channels; ++k)
 					{
-						result(i, j, k) = satic_cast<unsigned char>(result(i, j, k) / value);
+						result(i, j, k) = static_cast<unsigned char>(result(i, j, k) / value);
 					}
 				}
 			}
@@ -542,7 +542,7 @@ class Image
 				{
 					for (int k = 0; k < channels; ++k)
 					{
-						(*this)(i, j, k) = satic_cast<unsigned char>((*this)(i, j, k) / value);
+						(*this)(i, j, k) = static_cast<unsigned char>((*this)(i, j, k) / value);
 					}
 				}
 			}
@@ -554,7 +554,7 @@ class Image
 		seul canal en mode “GRAY”, avec les valeurs 0 ou 255*/
 		Image operator>=(unsigned char threshold) const
 		{
-			Image result(width, height, 1, "GRAY", 0);
+			Image result(width, height, channels, model, 0);
 			for (int i = 0; i < height; ++i)
 			{
 				for (int j = 0; j < width; ++j)
