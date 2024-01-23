@@ -43,6 +43,27 @@ public:
 
 	// tout ce qu’il faut pour compléter la règle des 3
 
+	//constructeur de copie
+	Image(const Image& other): width(other.width),heght(other.height), channels(other.channels), model(other.model), data(other.data){}
+
+	//operateur d'affectation
+	Image& operator=(const Image& other)
+	{
+		if (this != &other)
+		{
+			width = other.width;
+			heght = other.height;
+			channels = other.channels;
+			model = other.model;
+			data = other.data;
+		}
+		return *this;
+	}
+
+	//destructeur
+	~Image(){}
+
+
 	// les getters et setters des attributs
 
 //methode get
@@ -93,23 +114,23 @@ public:
 	coordonnées sont en dehors de l’image, on lancera une exception
 	*/
 	//fonction non cont 
-	unsigned char& operator()(int i, int j, int k)
+	unsigned char& at()(int i, int j, int k)
 	{
 		if (i < 0 || i >= width || j < 0 || j >= height || k < 0 || k >= channels)
 		{
 			throw std::out_of_range("coordonnées hors de l'image");
 		}
-		return data[i][j][k]; /*return data[j * width * channels + i * channels + k];*/
+		return data[j][i][k]; 
 	}
 
 	//fonction cont 
-	const unsigned char& operator()(int i, int j, int k) const
+	const unsigned char& at()(int i, int j, int k) const
 	{
 		if (i < 0 || i >= width || j < 0 || j >= height || k < 0 || k >= channels)
 		{
 			throw std::out_of_range("coordonnées hors de l'image");
 		}
-		return data[i][j][k]; /*return data[j * width * channels + i * channels + k];*/
+		return data[j][i][k]; 
 	}
 
 	//les operateurs a ajouter
@@ -124,14 +145,15 @@ public:
 			throw std::invalid_argument("les images ne sont pas compatibles pour une additions");
 		}
 
-		Image result(width, height, channels, model, 0);
+		Image result(*this);
 		for (int i = 0; i < height; ++i)
 		{
 			for (int j = 0; j < width; ++j)
 			{
 				for (int k = 0; k < channels; ++k)
 				{
-					result(i, j, k) = (*this)(i, j, k) + other(i, j, k);
+					int value = static_cast<int>(data[i][j][k]) + static_cast<int>(other.data[i][j][k]);
+					result.data[i][j][k] = static_cast<unsigned char>(std::min(255, std::max(0, value)));
 				}
 			}
 		}
@@ -580,7 +602,7 @@ public:
 	// - l’affichage (via <<) au format “<width>x<height>x<channels> (<mode>)”
 	friend std::ostream& operator<<(std::ostream& os, const Image& image)
 	{
-		os << image.getWidth() << "x" << image.getHeight() << "x" << image.getChannels() << " (" << image.getModel() << ")";
+		os << image.width << "x" << image.height << "x" << image.channels << " (" << image.model << ")";
 		return os;
 	}
 
